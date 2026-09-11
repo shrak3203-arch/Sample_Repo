@@ -1,0 +1,19 @@
+name: Agent Dispatch
+
+on:
+  repository_dispatch:
+    types: [agent-dispatch]
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Dispatch Received
+        run: |
+          echo "Dispatch triggered successfully for Jira issue: ${{ github.event.client_payload.issue_key }}"
