@@ -1,0 +1,47 @@
+name: Deploy Test Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        required: true
+        description: 'Target environment'
+      issue_key:
+        type: string
+        required: true
+        description: 'Jira Issue Key'
+      reason:
+        type: string
+        required: false
+        description: 'Deployment reason'
+      cuelight_callback_url:
+        type: string
+        required: false
+      cuelight_token:
+        type: string
+        required: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print inputs
+        run: |
+          echo "Deploying to ${{ github.event.inputs.environment }} for ${{ github.event.inputs.issue_key }}"
+          echo "Reason: ${{ github.event.inputs.reason }}"
+
+      # Simulating a deployment step
+      - name: Deployment Simulation
+        run: |
+          echo "Simulating deployment..."
+          sleep 5
+
+      # Cuelight callback report step
+      - name: Hand back the next step
+        if: always()
+        uses: huseyinbuyukdere/cuelight-report@v1
+        with:
+          status: ${{ job.status }}
+          message: Deployed ${{ github.sha }} to ${{ inputs.environment }}
+          next: rollback-staging, promote-production
